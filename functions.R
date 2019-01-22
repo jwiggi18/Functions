@@ -11,17 +11,18 @@ GetLatLong <- function(taxon,minage,maxage){
   return(lat_long)
 }
 
-#' function to produce a dataframe from a user supplied taxon list with latitude and longitude coordinates and accepted name from paleobiodb along with the minimum age and maximum age of the taxon fossil. Ages are as follows: Cambrian 543-490, Ordivician 490-443, Sularian 443-417, Devonian 417-354, Carboniferous 354-290, Permian 290-248, Triassic 248-206, Jurassic 206-144, Cretacous 144-65, Paleogene 65-33.7, Neogene 33.7-1.8
+#' function to produce a dataframe from a user supplied taxon list with latitude and longitude coordinates and accepted name from paleobiodb along with the minimum age and maximum age of the taxon fossil. Ages follow the current official geologic timescale of teh International Commission on Stratigraphy.
 #'@param taxa a character vector of taxon names
-#'@return a data frame with column names: pbdb_data.accepted_name, pbdb_data.paleolng, pbdb_data.paleolat, taxon, minage, maxage. "taxon" is the user-supplied taxon name.
+#'@return a data frame with column names: pbdb_data.accepted_name, pbdb_data.paleolng, pbdb_data.paleolat, taxon, minage, maxage, midage. "taxon" is the user-supplied taxon name.
 #'@export
-
 latlong_age <- function(taxa){
-  Period <- c("Cambrian","Ordivician","Sularian","Devonian","Carboniferous","Permian","Triassic","Jurassic","Cretacous","Paleogene","Neo")
+  Period <- c("Cambrian","Ordivician","Sularian","Devonian","Carboniferous","Permian","Triassic","Jurassic","Cretacous","Paleogene","Neo","Quaternary")
 
-  MinMa <- c(490,443,417,354,290,248,206,144,65,33.7,1.8)
+  MinMa <- c(485,444,419,359,299,252,201,145,65,23,2.58, 0)
 
-  MaxMa <- c(543,490,443,417,354,290,248,206,144,65,33.7)
+  MaxMa <- c(541,485,444,419,359,299,252,201,145,65,23,2.58)
+
+  MidMa <- c(513,464,431,389,328,278,226,173,105,44,12, 1)
 
   geoage <- data.frame(Period, MinMa, MaxMa)
 
@@ -37,7 +38,7 @@ latlong_age <- function(taxa){
             lat_long_df<- rbind(lat_long_df, latlong.result)
           }
         }
-    return(lat_long_df)
+  return(lat_long_df)
 }
 
 
@@ -47,7 +48,6 @@ latlong_age <- function(taxa){
 #'@param maxage a numerical vector of length one indicating that entires must be at most (<=) this old to be returned
 #'@return a data frame of entries subset by the user supplied minage and maxage
 #'@export
-
 subset_ma <- function(df, minage, maxage){
   df <- df[complete.cases(df),]
   age_latlong <- df[which(df$minage >= minage & df$maxage <= maxage), ]
@@ -59,7 +59,6 @@ subset_ma <- function(df, minage, maxage){
 #'@param taxon a character vector of length one indicating the taxon name by which to filter
 #'@return a data frame of entries subset by the user supplied taxon name
 #'@export
-
 subset_taxon <- function(df, taxon){
   df <- df[complete.cases(df),]
   taxon_latlong <- df[which(df$taxon == taxon), ]
@@ -71,8 +70,6 @@ subset_taxon <- function(df, taxon){
 #'@param map a map created using gplatesr plot_gplates or black_white functions
 #'@param df a data frame containing pbdb_data.paleolng and pbdb_data.paleolat
 #'@param ptcolor a character vector indicating the desired color of added data points
-
-#add points to map
 add_points <- function(map, df, ptcolor) {
   map + geom_point(data = df, aes(x=pbdb_data.paleolng, y=pbdb_data.paleolat), color = ptcolor)
 }
