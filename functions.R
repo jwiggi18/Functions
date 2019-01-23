@@ -54,6 +54,14 @@ subset_ma <- function(df, minage, maxage){
   return(age_latlong)
 }
 
+#same as subset_ma except uses latlong_df dataframe
+subset_latlongdf <- function(minage, maxage){
+  latlong_df <- latlong_df[complete.cases(latlong_df),]
+  age_latlong <- latlong_df[which(latlong_df$minage >= minage & latlong_df$maxage <= maxage), ]
+  return(age_latlong)
+}
+
+
 #' function to subset a dataframe by taxon name
 #'@param df a dataframe to be subset containing columns 'taxon'
 #'@param taxon a character vector of length one indicating the taxon name by which to filter
