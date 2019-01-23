@@ -11,32 +11,62 @@ GetLatLong <- function(taxon,minage,maxage){
   return(lat_long)
 }
 
+GetLatLongAnytime <- function(taxon){
+  pbdb_data <- read.csv(paste0("http://paleobiodb.org/",
+    "data1.2/occs/list.txt?base_name=",taxon,"&level=3&show=paleoloc"),
+    stringsAsFactors = FALSE)
+  lat_long <- data.frame(pbdb_data$accepted_name, pbdb_data$paleolng, pbdb_data$paleolat, pbdb_data$max_ma, pbdb_data$min_ma, pbdb_data$early_interval, pbdb_data$late_interval)
+  lat_long$searched_taxon <- taxon
+  return(lat_long)
+}
+
 #' function to produce a dataframe from a user supplied taxon list with latitude and longitude coordinates and accepted name from paleobiodb along with the minimum age and maximum age of the taxon fossil. Ages follow the current official geologic timescale of teh International Commission on Stratigraphy.
-#'@param taxa a character vector of taxon names
-#'@return a data frame with column names: pbdb_data.accepted_name, pbdb_data.paleolng, pbdb_data.paleolat, taxon, minage, maxage, midage. "taxon" is the user-supplied taxon name.
-#'@export
-latlong_age <- function(taxa){
-  Period <- c("Cambrian","Ordivician","Sularian","Devonian","Carboniferous","Permian","Triassic","Jurassic","Cretacous","Paleogene","Neo","Quaternary")
+##'@param taxa a character vector of taxon names
+##'@return a data frame with column names: pbdb_data.accepted_name, pbdb_data.paleolng, pbdb_data.paleolat, taxon, minage, maxage, midage. "taxon" is the user-supplied taxon name.
+##'@export
+#latlong_age <- function(taxa){
+#  Period <- c("Cambrian","Ordivician","Sularian","Devonian","Carboniferous","Permian","Triassic","Jurassic","Cretacous","Paleogene","Neo","Quaternary")
 
-  MinMa <- c(485,444,419,359,299,252,201,145,65,23,2.58, 0)
+#  MinMa <- c(485,444,419,359,299,252,201,145,65,23,2.58, 0)
 
-  MaxMa <- c(541,485,444,419,359,299,252,201,145,65,23,2.58)
+#  MaxMa <- c(541,485,444,419,359,299,252,201,145,65,23,2.58)
 
-  MidMa <- c(513,464,431,389,328,278,226,173,105,44,12, 1)
+#  MidMa <- c(513,464,431,389,328,278,226,173,105,44,12, 1)
 
-  geoage <- data.frame(Period, MinMa, MaxMa)
+#  geoage <- data.frame(Period, MinMa, MaxMa)
 
   #store pbdb_data.accepted_name, pbdb_data.lng, pbdb_data.lat, taxon, minage, & maxage in a data frame
+#  lat_long_df <- data.frame()
+
+#  for (taxon_index in seq_along(taxa)) {
+#      for (period_index in seq_along(Period)) {
+#            latlong.result <- GetLatLong(taxa[taxon_index], minage=MinMa[period_index], maxage=MaxMa[period_index])
+#            latlong.result$taxon=taxa[taxon_index]
+#            latlong.result$minage=MinMa[period_index]
+#            latlong.result$maxage=MaxMa[period_index]
+#            lat_long_df<- rbind(lat_long_df, latlong.result)
+#          }
+#        }
+#  return(lat_long_df)
+#}
+
+Period <- c("Cambrian","Ordivician","Sularian","Devonian","Carboniferous","Permian","Triassic","Jurassic","Cretacous","Paleogene","Neo","Quaternary")
+
+MinMa <- c(485,444,419,359,299,252,201,145,65,23,2.58, 0)
+
+MaxMa <- c(541,485,444,419,359,299,252,201,145,65,23,2.58)
+
+MidMa <- c(513,464,431,389,328,278,226,173,105,44,12, 1)
+
+
+latlong_age <- function(taxa){
+  #store pbdb_data.accepted_name, pbdb_data.lng, pbdb_data.lat, taxon, pbdb_data.early_interval, pbdb_data.late_interval, pbdb_data.max_ma, pbdb_data.min_ma
   lat_long_df <- data.frame()
 
   for (taxon_index in seq_along(taxa)) {
-      for (period_index in seq_along(Period)) {
-            latlong.result <- GetLatLong(taxa[taxon_index], minage=MinMa[period_index], maxage=MaxMa[period_index])
+            latlong.result <- GetLatLongAnytime(taxa[taxon_index])
             latlong.result$taxon=taxa[taxon_index]
-            latlong.result$minage=MinMa[period_index]
-            latlong.result$maxage=MaxMa[period_index]
             lat_long_df<- rbind(lat_long_df, latlong.result)
-          }
         }
   return(lat_long_df)
 }
