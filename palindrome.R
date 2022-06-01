@@ -327,12 +327,14 @@ Pstring <- "GAATTC" #palindrome
 #I think this can only work if I create the reversed string based on what is supposed to pair nto reversing the srtring
 
 PcompStr <- complementCreate(Pstring)
+NPcompStr <-complementCreate(Pstring)
 
 palendromeCheck <- function(str, compStr) {
   L <- length(str)
   Half <- L/2
+  compStrRev <- paste(rev(compStr))
   for (i in seq_along(str)) {
-    if(str[i] != compStr[L - i - 1]) {
+    if(str[i] != compStrRev[i]) {
       return("FALSE")
     } else {
       return("TRUE")
@@ -340,8 +342,14 @@ palendromeCheck <- function(str, compStr) {
   }
 }
 
+
+paste(rev(PcompStr))
+
+Pstring_splt <- strsplit(Pstring, "") [[1]]
+NPstring_splt <- strsplit(Pstring, "") [[1]]
 L <- length(Pstring)
-palendromeCheck(Pstring, PcompStr)
+palendromeCheck(Pstring_splt, PcompStr)
+palendromeCheck(NPstring_splt, NPcompStr)
 
 
 
